@@ -73,11 +73,27 @@ For computationally heavy tasks (e.g., running the VLA model or MuJoCo simulatio
    sbatch scripts/run_simulation_pace.sh
    ```
 
-### Local Setup
-If running locally on a dedicated machine:
+### Local Setup & Utility Commands
+If running locally on a dedicated machine, ensure all dependencies are installed:
 ```bash
 pip install -r requirements.txt
+```
+
+You can run the starter scripts for each subsystem as follows:
+
+**1. Simulation (P1)**
+```bash
 python simulation/run_mujoco_experiments.py --mode all
+```
+
+**2. Interface (P2)**
+```bash
+python interface/start_gui.py
+```
+
+**3. Data Analysis (P3)**
+```bash
+python data_analysis/pilot_scoring.py
 ```
 
 ## Timeline
