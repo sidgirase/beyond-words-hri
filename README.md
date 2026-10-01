@@ -2,13 +2,13 @@
 
 This repository contains the codebase for the CS-7633 HRI Fall 2026 project. The project evaluates multi-modal clarification strategies (verbal, gestural, hybrid) when a robot encounters ambiguous instructions.
 
-## 🎯 Mid-Point Goal (Next Week)
+## Mid-Point Goal (Next Week)
 **Goal:** Present functioning code and initial output by the midpoint submission (10/20-22).
 **Deliverables:**
 1. 4 modes of clarification functioning in simulation.
 2. Pilot test completed to verify urgency and scoring metrics.
 
-## 📁 Repository Structure
+## Repository Structure
 ```
 HRI_Project/
 ├── docs/                # Proposals, papers, survey drafts
@@ -19,7 +19,7 @@ HRI_Project/
 └── scripts/             # PACE-ICE SLURM submission scripts
 ```
 
-## 🧑‍💻 Team Roles & Task Division (P1, P2, P3)
+## Team Roles & Task Division (P1, P2, P3)
 
 ### P1: Om Shivam Verma (Simulation & VLA Integration)
 - **Mid-Point Tasks:** 
@@ -41,7 +41,7 @@ HRI_Project/
 
 ---
 
-## 🚀 Running Experiments & PACE-ICE Setup
+## Running Experiments & PACE-ICE Setup
 
 For computationally heavy tasks (e.g., running the VLA model or MuJoCo simulations), we utilize the **PACE-ICE** cluster. 
 
@@ -65,7 +65,7 @@ pip install -r requirements.txt
 python simulation/run_mujoco_experiments.py --mode all
 ```
 
-## 🗓️ Timeline
+## Timeline
 - [x] **10/8:** Check-In 1 - Simulation & GUI setup.
 - [ ] **10/20-22:** Mid-Point Poster - 4 modes working, Pilot test complete.
 - [ ] **11/10:** Check-In 2 - Complete all participant experiments, administer debriefs.
