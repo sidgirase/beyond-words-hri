@@ -8,7 +8,7 @@ def main():
     args = parser.parse_args()
 
     print(f"Starting MuJoCo simulation for mode: {args.mode}")
-    # TODO: P1 (Om) - Implement VLA deployment and 4 modes here
+    # TODO: P1 - Implement VLA deployment and 4 modes here
 
 if __name__ == '__main__':
     main()
