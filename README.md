@@ -21,23 +21,38 @@ HRI_Project/
 
 ## Team Roles & Task Division (P1, P2, P3)
 
-### P1: Om Shivam Verma (Simulation & VLA Integration)
-- **Mid-Point Tasks:** 
-  - Finalize VLA deployment on the simulation-based robot.
-  - Implement the **4 clarification modes** (Immediate, Ask, Gesture, Hybrid) in MuJoCo.
+### Before Midterm Tasks (Target: 10/20)
+**Focus:** Have the 4 modes functioning in simulation and complete the pilot test.
+
+#### P1: Om Shivam Verma (Simulation & VLA Integration)
+- Finalize VLA deployment on the simulation-based robot.
+- Implement the **4 clarification modes** (Immediate, Ask, Gesture, Hybrid) in MuJoCo.
 - **Run Experiments:** `simulation/run_mujoco_experiments.py`
 
-### P2: Rena Nakashima (Interface & User Study)
-- **Mid-Point Tasks:** 
-  - Build the gamified chat/audio GUI for the human-robot interaction.
-  - Set up data logging for objective (time, success) and subjective metrics.
+#### P2: Rena Nakashima (Interface & Pilot Setup)
+- Build the gamified chat/audio GUI for human-robot interaction.
+- Set up data logging for objective (time, success) and subjective metrics.
 - **Run Experiments:** `interface/start_gui.py`
 
-### P3: Siddhesh Girase (Metrics & Physical Readiness)
-- **Mid-Point Tasks:** 
-  - Design and force the **scoring metric** to ensure ambiguity/urgency holds in the pilot.
-  - Test initial translation of simulated gestures to physical Stretch limits (pre-study).
+#### P3: Siddhesh Girase (Metrics & Pilot Validation)
+- Design and implement the **scoring metric** to ensure ambiguity/urgency holds.
+- Conduct the pilot test to verify the setup before the main user study.
 - **Run Experiments:** `data_analysis/pilot_scoring.py`
+
+### After Midterm Tasks (Target: 11/10 & 12/1)
+**Focus:** Complete the main user study on the physical robot and perform data analysis.
+
+#### P1: Om Shivam Verma (Physical Robot Deployment)
+- Translate the 4 clarification modes from simulation to the physical Stretch 2/3 robot.
+- Ensure gesture visibility and motion execution are safe and legible.
+
+#### P2: Rena Nakashima (User Study Execution)
+- Conduct the main participant experiments across the four conditions.
+- Administer the "Score Debrief" surveys and maintain participant records.
+
+#### P3: Siddhesh Girase (Data Analysis & Conclusion)
+- Statistically analyze the objective scores (success rate, time) vs. survey ratings.
+- Determine which clarification mode yielded the best performance and user perception.
 
 ---
 
