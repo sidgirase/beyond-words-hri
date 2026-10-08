@@ -7,8 +7,9 @@ try:
     from transformers import AutoModelForVision2Seq, AutoProcessor
     from PIL import Image
     import numpy as np
-except ImportError:
-    print("Warning: ML dependencies not found. Please install requirements.txt")
+except ImportError as e:
+    print(f"Warning: ML dependencies not found. Specific error: {e}")
+    print("Please ensure requirements.txt is fully installed on the compute node.")
 
 # Dummy stretch environment for MuJoCo to allow testing without the physical stack
 class StretchMujocoEnv:
