@@ -17,7 +17,17 @@ import imageio
 class StretchMujocoEnv:
     def __init__(self, use_gui=False):
         self.use_gui = use_gui
-        self.model = mujoco.MjModel.from_xml_path('simulation/custom_scene.xml')
+        
+        # Read XML from the main repo
+        with open('simulation/custom_scene.xml', 'r') as f:
+            xml_content = f.read()
+            
+        # Change directory to the submodule so the relative <include> and assets resolve perfectly
+        old_cwd = os.getcwd()
+        os.chdir('simulation/mujoco_menagerie/hello_robot_stretch')
+        self.model = mujoco.MjModel.from_xml_string(xml_content)
+        os.chdir(old_cwd)
+        
         self.data = mujoco.MjData(self.model)
         self.renderer = mujoco.Renderer(self.model, height=480, width=640)
         
