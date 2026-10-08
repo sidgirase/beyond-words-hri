@@ -166,8 +166,12 @@ def main():
     parser.add_argument('--use_gui', type=lambda x: (str(x).lower() == 'true'), default=False)
     args = parser.parse_args()
 
-    os.makedirs(args.log_dir, exist_ok=True)
+    # Create timestamped run directory
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    run_dir = os.path.join(args.log_dir, f"run_{timestamp}")
+    os.makedirs(run_dir, exist_ok=True)
     print(f"Starting MuJoCo simulation for scenario: {args.scenario}")
+    print(f"Saving outputs to: {run_dir}")
 
     # Initialize Simulator
     env = StretchMujocoEnv(use_gui=args.use_gui)
@@ -180,7 +184,7 @@ def main():
     scenarios_to_run = all_scenarios if args.scenario == 'all' else [args.scenario]
     
     for s in scenarios_to_run:
-        run_scenario(s, env, vla, processor, args.log_dir)
+        run_scenario(s, env, vla, processor, run_dir)
 
 if __name__ == '__main__':
     main()
