@@ -5,7 +5,7 @@ import os
 try:
     import torch
     from transformers import AutoModelForImageTextToText, AutoProcessor
-    from PIL import Image
+    from PIL import Image, ImageDraw, ImageFont
     import numpy as np
 except ImportError as e:
     print(f"Warning: ML dependencies not found. Specific error: {e}")
@@ -14,49 +14,27 @@ except ImportError as e:
 import mujoco
 import imageio
 
-# A basic MuJoCo XML scene with a pointer (representing the robot) and two cups
-BASIC_SCENE_XML = """
-<mujoco>
-    <visual>
-        <global offwidth="640" offheight="480"/>
-    </visual>
-    <worldbody>
-        <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
-        <geom type="plane" size="1 1 0.1" rgba=".9 .9 .9 1"/>
-        
-        <!-- Red Cup (Left) -->
-        <body pos="-0.2 0 0.1">
-            <geom type="cylinder" size="0.05 0.1" rgba="1 0 0 1"/>
-        </body>
-        
-        <!-- Blue Cup (Right) -->
-        <body pos="0.2 0 0.1">
-            <geom type="cylinder" size="0.05 0.1" rgba="0 0 1 1"/>
-        </body>
-        
-        <!-- Robot Pointer -->
-        <body name="robot_pointer" pos="0 -0.5 0.2">
-            <joint type="free"/>
-            <geom type="box" size="0.02 0.1 0.02" rgba="0.2 0.8 0.2 1"/>
-        </body>
-    </worldbody>
-</mujoco>
-"""
-
 class StretchMujocoEnv:
     def __init__(self, use_gui=False):
         self.use_gui = use_gui
-        self.model = mujoco.MjModel.from_xml_string(BASIC_SCENE_XML)
+        self.model = mujoco.MjModel.from_xml_path('simulation/custom_scene.xml')
         self.data = mujoco.MjData(self.model)
         self.renderer = mujoco.Renderer(self.model, height=480, width=640)
         
         # We will store frames here to save as a video later
         self.frames = []
+        self.current_caption = ""
         print("[MuJoCo] Initialized real MuJoCo offscreen rendering environment.")
         
     def _record_frame(self):
         self.renderer.update_scene(self.data)
         pixels = self.renderer.render()
+        if self.current_caption:
+            img = Image.fromarray(pixels)
+            draw = ImageDraw.Draw(img)
+            # Burn text into the top left corner (could use custom font later)
+            draw.text((20, 20), self.current_caption, fill=(255, 255, 0))
+            pixels = np.array(img)
         self.frames.append(pixels)
 
     def get_camera_image(self):
@@ -66,34 +44,42 @@ class StretchMujocoEnv:
 
     def execute_action(self, action_vector):
         print(f"[MuJoCo] Executing action vector: {action_vector}")
-        # Simulate moving forward
-        for _ in range(30):
-            self.data.qpos[1] += 0.01  # Move Y axis
+        # Drive the robot forward
+        self.data.actuator('forward').ctrl[0] = action_vector[0] * 5.0
+        for _ in range(40):
             mujoco.mj_step(self.model, self.data)
             self._record_frame()
+        self.data.actuator('forward').ctrl[0] = 0.0
         
     def gesture_lean_and_pause(self, target_location):
         print(f"[MuJoCo] GESTURE: Leaning arm toward {target_location} and pausing...")
-        # Simulate a lean to the left (towards red cup)
-        for _ in range(20):
-            self.data.qpos[0] -= 0.005 # Move X axis
-            self.data.qpos[1] += 0.005 # Move Y axis
+        # Extend the arm and turn wrist slightly to point
+        self.data.actuator('arm_extend').ctrl[0] = 0.25
+        self.data.actuator('wrist_yaw').ctrl[0] = 1.0
+        for _ in range(40):
             mujoco.mj_step(self.model, self.data)
             self._record_frame()
             
         # Pause for human
-        for _ in range(30):
+        for _ in range(50):
             mujoco.mj_step(self.model, self.data)
             self._record_frame()
             
-        # Return to center if nudged
-        for _ in range(20):
-            self.data.qpos[0] += 0.005 
+        # Return to center
+        self.data.actuator('arm_extend').ctrl[0] = 0.0
+        self.data.actuator('wrist_yaw').ctrl[0] = 0.0
+        for _ in range(40):
             mujoco.mj_step(self.model, self.data)
             self._record_frame()
         
     def speak(self, text):
         print(f"[Robot Audio] {text}")
+        self.current_caption = f"Robot Audio: {text}"
+        # Render a few frames with the text so it stays on screen
+        for _ in range(60):
+            mujoco.mj_step(self.model, self.data)
+            self._record_frame()
+        self.current_caption = ""
         
     def save_video(self, filename):
         if len(self.frames) > 0:
@@ -103,6 +89,7 @@ class StretchMujocoEnv:
             writer.close()
             print(f"[MuJoCo] Saved video to {filename}")
         self.frames = [] # Reset for next mode
+        self.current_caption = ""
         mujoco.mj_resetData(self.model, self.data) # Reset simulation state
 
 def load_vla_model(device="cuda"):
