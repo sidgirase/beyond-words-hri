@@ -13,7 +13,6 @@ except ImportError as e:
 
 import mujoco
 import imageio
-import cv2
 
 # A basic MuJoCo XML scene with a pointer (representing the robot) and two cups
 BASIC_SCENE_XML = """
