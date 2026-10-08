@@ -16,7 +16,8 @@ module load anaconda3/2023.03
 module load cuda/11.8
 
 echo "Activating Conda Environment..."
-source activate hri_vla_env
+eval "$(conda shell.bash hook)"
+conda activate hri_vla_env
 
 # Run the simulation experiments for the 4 clarification modes
 echo "Starting VLA simulation in MuJoCo..."
