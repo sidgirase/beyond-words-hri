@@ -19,19 +19,19 @@
     <!-- Table in front of the robot -->
     <body name="table" pos="0.7 0 0.24">
       <geom type="box" size=".3 .5 .24" mass="1" material="wood"/>
+    </body>
       
-      <!-- Red Cup (Left) -->
-      <body name="red_cup" pos="0 -0.2 0.3">
-        <freejoint/>
-        <!-- Cup body (cylinder) -->
-        <geom type="cylinder" size="0.04 0.06" rgba="1 0.1 0.1 1" mass="0.1"/>
-      </body>
-      
-      <!-- Blue Cup (Right) -->
-      <body name="blue_cup" pos="0 0.2 0.3">
-        <freejoint/>
-        <geom type="cylinder" size="0.04 0.06" rgba="0.1 0.1 1 1" mass="0.1"/>
-      </body>
+    <!-- Red Cup (Left) -->
+    <body name="red_cup" pos="0.7 -0.2 0.54">
+      <freejoint/>
+      <!-- Cup body (cylinder) -->
+      <geom type="cylinder" size="0.04 0.06" rgba="1 0.1 0.1 1" mass="0.1"/>
+    </body>
+    
+    <!-- Blue Cup (Right) -->
+    <body name="blue_cup" pos="0.7 0.2 0.54">
+      <freejoint/>
+      <geom type="cylinder" size="0.04 0.06" rgba="0.1 0.1 1 1" mass="0.1"/>
     </body>
   </worldbody>
 </mujoco>
