@@ -42,41 +42,37 @@ class StretchMujocoEnv:
         self._record_frame()
         return Image.fromarray(self.frames[-1])
 
-    def execute_action(self, action_vector):
-        print(f"[MuJoCo] Executing action vector: {action_vector}")
-        # Drive the robot forward
-        self.data.actuator('forward').ctrl[0] = action_vector[0] * 5.0
-        for _ in range(40):
-            mujoco.mj_step(self.model, self.data)
-            self._record_frame()
-        self.data.actuator('forward').ctrl[0] = 0.0
-        
-    def gesture_lean_and_pause(self, target_location):
-        print(f"[MuJoCo] GESTURE: Leaning arm toward {target_location} and pausing...")
-        # Extend the arm and turn wrist slightly to point
-        self.data.actuator('arm_extend').ctrl[0] = 0.25
-        self.data.actuator('wrist_yaw').ctrl[0] = 1.0
-        for _ in range(40):
+    def point_at(self, target):
+        yaw_val = 1.0 if target == "red" else -1.0 # Red is +y left relative to robot, but wait, stretch wrist yaw: let's just use 1.0 and -1.0
+        print(f"[MuJoCo] GESTURE: Pointing at {target} cup...")
+        self.data.actuator('arm_extend').ctrl[0] = 0.15
+        self.data.actuator('wrist_yaw').ctrl[0] = yaw_val
+        for _ in range(30):
             mujoco.mj_step(self.model, self.data)
             self._record_frame()
             
-        # Pause for human
-        for _ in range(50):
-            mujoco.mj_step(self.model, self.data)
-            self._record_frame()
-            
-        # Return to center
-        self.data.actuator('arm_extend').ctrl[0] = 0.0
+    def retract(self):
         self.data.actuator('wrist_yaw').ctrl[0] = 0.0
+        self.data.actuator('arm_extend').ctrl[0] = 0.0
+        for _ in range(30):
+            mujoco.mj_step(self.model, self.data)
+            self._record_frame()
+
+    def touch(self, target):
+        yaw_val = 1.0 if target == "red" else -1.0
+        print(f"[MuJoCo] ACTION: Touching {target} cup...")
+        self.data.actuator('wrist_yaw').ctrl[0] = yaw_val
+        self.data.actuator('arm_extend').ctrl[0] = 0.35
         for _ in range(40):
             mujoco.mj_step(self.model, self.data)
             self._record_frame()
+        self.retract()
         
-    def speak(self, text):
-        print(f"[Robot Audio] {text}")
-        self.current_caption = f"Robot Audio: {text}"
-        # Render a few frames with the text so it stays on screen
-        for _ in range(60):
+    def speak(self, text, duration=60):
+        print(f"[Audio] {text}")
+        self.current_caption = text
+        # Render frames with the text so it stays on screen
+        for _ in range(duration):
             mujoco.mj_step(self.model, self.data)
             self._record_frame()
         self.current_caption = ""
@@ -105,51 +101,73 @@ def load_vla_model(device="cuda"):
     # return vla, processor
     return None, None
 
-def run_clarification_mode(mode, env, vla, processor, log_dir, instruction="bring me the cup"):
-    print(f"\n--- Running Condition: {mode.upper()} ---")
-    image = env.get_camera_image()
+def run_scenario(scenario, env, vla, processor, log_dir):
+    print(f"\n--- Running Scenario: {scenario.upper()} ---")
     
-    # 1. Immediate Action
-    if mode == "immediate":
-        print("[Agent] Inferring best action without clarification.")
-        # VLA predicts action directly
-        env.execute_action([0.1, 0.0, -0.2, 0.0, 1.0])
+    # 1. Assume Mode
+    if scenario == "assume":
+        env.speak("Robot: Assuming red cup.", duration=30)
+        env.touch("red")
         
-    # 2. Asking for Clarification
-    elif mode == "ask":
-        print("[Agent] Detected ambiguity. Formulating clarification question.")
-        env.speak("Did you mean the red cup on the left, or the blue cup on the right?")
-        # Wait for user input (simulated)
-        print("[Human] The blue one.")
-        env.execute_action([0.5, 0.2, 0.0, 0.0, 1.0])
+    # 2. Audio Yes
+    elif scenario == "audio_yes":
+        env.speak("Robot: Did you mean the red cup?", duration=50)
+        env.speak("Human: Yes.", duration=40)
+        env.touch("red")
         
-    # 3. Arm Gestures
-    elif mode == "gesture":
-        print("[Agent] Detected ambiguity. Using physical gesture.")
-        env.gesture_lean_and_pause("hypothesized_target_1")
-        print("[Human] *Nudges robot to confirm*")
-        env.execute_action([0.5, 0.2, 0.0, 0.0, 1.0])
+    # 3. Audio No
+    elif scenario == "audio_no":
+        env.speak("Robot: Did you mean the red cup?", duration=50)
+        env.speak("Human: No, the blue one.", duration=50)
+        env.speak("Robot: Understood.", duration=30)
+        env.touch("blue")
         
-    # 4. Hybrid (Ask + Gesture)
-    elif mode == "hybrid":
-        print("[Agent] Detected ambiguity. Using multi-modal clarification.")
-        env.speak("Did you mean this cup?")
-        env.gesture_lean_and_pause("hypothesized_target_1")
-        print("[Human] Yes, that one.")
-        env.execute_action([0.5, 0.2, 0.0, 0.0, 1.0])
+    # 4. Gesture Yes
+    elif scenario == "gesture_yes":
+        env.point_at("red")
+        env.speak("Human: Yes.", duration=40)
+        env.touch("red")
+        
+    # 5. Gesture No
+    elif scenario == "gesture_no":
+        env.point_at("red")
+        env.speak("Human: No.", duration=40)
+        env.retract()
+        env.point_at("blue")
+        env.speak("Human: Yes.", duration=40)
+        env.touch("blue")
+        
+    # 6. Hybrid Yes
+    elif scenario == "hybrid_yes":
+        env.point_at("red")
+        env.speak("Robot: Did you mean this cup?", duration=50)
+        env.speak("Human: Yes.", duration=40)
+        env.touch("red")
+        
+    # 7. Hybrid No
+    elif scenario == "hybrid_no":
+        env.point_at("red")
+        env.speak("Robot: Did you mean this cup?", duration=50)
+        env.speak("Human: No, the other one.", duration=50)
+        env.retract()
+        env.point_at("blue")
+        env.speak("Robot: This one?", duration=40)
+        env.speak("Human: Yes.", duration=40)
+        env.touch("blue")
 
     # Save the recorded frames as an MP4 video
-    env.save_video(f"{log_dir}/clarification_{mode}.mp4")
+    env.save_video(f"{log_dir}/scenario_{scenario}.mp4")
 
 def main():
     parser = argparse.ArgumentParser(description='Run MuJoCo Simulation for HRI Project')
-    parser.add_argument('--mode', type=str, default='all', choices=['immediate', 'ask', 'gesture', 'hybrid', 'all'])
+    parser.add_argument('--scenario', type=str, default='all', 
+                        choices=['assume', 'audio_yes', 'audio_no', 'gesture_yes', 'gesture_no', 'hybrid_yes', 'hybrid_no', 'all'])
     parser.add_argument('--log_dir', type=str, default='./data_analysis/pilot_logs')
     parser.add_argument('--use_gui', type=lambda x: (str(x).lower() == 'true'), default=False)
     args = parser.parse_args()
 
     os.makedirs(args.log_dir, exist_ok=True)
-    print(f"Starting MuJoCo simulation for mode: {args.mode}")
+    print(f"Starting MuJoCo simulation for scenario: {args.scenario}")
 
     # Initialize Simulator
     env = StretchMujocoEnv(use_gui=args.use_gui)
@@ -158,10 +176,11 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     vla, processor = load_vla_model(device)
     
-    modes_to_run = ['immediate', 'ask', 'gesture', 'hybrid'] if args.mode == 'all' else [args.mode]
+    all_scenarios = ['assume', 'audio_yes', 'audio_no', 'gesture_yes', 'gesture_no', 'hybrid_yes', 'hybrid_no']
+    scenarios_to_run = all_scenarios if args.scenario == 'all' else [args.scenario]
     
-    for m in modes_to_run:
-        run_clarification_mode(m, env, vla, processor, args.log_dir)
+    for s in scenarios_to_run:
+        run_scenario(s, env, vla, processor, args.log_dir)
 
 if __name__ == '__main__':
     main()

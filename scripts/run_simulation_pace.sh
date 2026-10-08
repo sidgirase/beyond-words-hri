@@ -20,7 +20,7 @@ module load cuda/11.8
 echo "Starting VLA simulation in MuJoCo..."
 export MUJOCO_GL="egl"
 ./vla_scratch_env/bin/python simulation/run_mujoco_experiments.py \
-    --mode all \
+    --scenario all \
     --log_dir ./data_analysis/pilot_logs \
     --use_gui False 
 
