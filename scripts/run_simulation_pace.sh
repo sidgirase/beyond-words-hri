@@ -15,13 +15,10 @@ echo "Loading modules..."
 module load anaconda3/2023.03
 module load cuda/11.8
 
-echo "Activating Conda Environment..."
-eval "$(conda shell.bash hook)"
-conda activate hri_vla_env
-
-# Run the simulation experiments for the 4 clarification modes
+# We bypass conda activate entirely and use the absolute path to the python binary
+# since SLURM can be very finicky with bash hooks.
 echo "Starting VLA simulation in MuJoCo..."
-python simulation/run_mujoco_experiments.py \
+~/.conda/envs/hri_vla_env/bin/python simulation/run_mujoco_experiments.py \
     --mode all \
     --log_dir ./data_analysis/pilot_logs \
     --use_gui False 
