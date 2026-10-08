@@ -18,6 +18,7 @@ module load cuda/11.8
 # We bypass conda activate entirely and use the absolute path to the python binary
 # since SLURM can be very finicky with bash hooks.
 echo "Starting VLA simulation in MuJoCo..."
+export MUJOCO_GL="egl"
 ./vla_scratch_env/bin/python simulation/run_mujoco_experiments.py \
     --mode all \
     --log_dir ./data_analysis/pilot_logs \
