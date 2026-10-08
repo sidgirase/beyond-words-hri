@@ -4,7 +4,7 @@ import os
 
 try:
     import torch
-    from transformers import AutoModelForVision2Seq, AutoProcessor
+    from transformers import AutoModelForImageTextToText, AutoProcessor
     from PIL import Image
     import numpy as np
 except ImportError as e:
