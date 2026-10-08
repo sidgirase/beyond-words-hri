@@ -4,3 +4,5 @@ mujoco
 numpy
 accelerate
 pillow
+imageio
+imageio-ffmpeg
