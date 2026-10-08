@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=hri_vla_sim
-#SBATCH --account=pace-ice
-#SBATCH --partition=pace-ice-gpu  # Often required by PACE job_submit.lua
+#SBATCH --account=ic
+#SBATCH --partition=ice-gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
