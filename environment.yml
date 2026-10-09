@@ -1,0 +1,15 @@
+# Conda environment for the HRI Stretch project.
+# Create:  conda env create -f environment.yml
+# Update:  conda env update -f environment.yml --prune
+# Use:     conda activate hri_stretch
+# See wiki/concepts/dev-environment.md for why these versions are pinned.
+name: hri_stretch
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11        # not 3.10: its time.sleep is too coarse on Windows, sim runs at ~0.15x real time
+  - pip
+  - git                # needed by pip to install stretch_mujoco from GitHub
+  - pip:
+      - mujoco==3.2.6  # stretch_mujoco's robot model fails to load on newer MuJoCo (3.4.0 tested)
+      - hello-robot-stretch-mujoco @ git+https://github.com/hello-robot/stretch_mujoco.git@d107e094cc295d92f7461bd233daef96e9e22fab
