@@ -91,7 +91,22 @@
         <!-- Tutorial & Tech Check Screen -->
         <div id="screen-tutorial" class="screen hidden bg-white rounded-xl shadow-lg p-8">
             <h1 class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Technical Check & Tutorial</h1>
-            <p class="mb-6 text-justify">Before we begin, we need to ensure the robot can hear you clearly. Please click "Record Test Audio", say "Hello Robot", and then play it back to confirm your microphone is working.</p>
+            
+            <div class="mb-6 text-gray-700 text-justify leading-relaxed">
+                <h3 class="font-bold text-lg mb-2 text-blue-600">Your Task:</h3>
+                <p class="mb-4">You will command the robot to interact with objects on the table (e.g., "Pick up the blue cup"). Because the environment can be ambiguous, the robot may ask you for clarification using its voice, gestures, or both. You will answer the robot until it makes a decision.</p>
+
+                <h3 class="font-bold text-lg mb-2 text-blue-600">How to use the Interface:</h3>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Send Commands:</strong> Use the text box or the <span class="bg-red-500 text-white px-2 py-1 rounded text-xs shadow-sm">🎤 Speak</span> button to reply to the robot.</li>
+                    <li><strong>Replay Robot Action:</strong> Click this if you missed what the robot just said or pointed at, and need it to repeat its action.</li>
+                    <li><strong>Finish (Success):</strong> Click this when the episode is over and the robot has successfully identified the correct object.</li>
+                    <li><strong>Finish (Failure):</strong> Click this if the episode ends and the robot completely failed or grabbed the wrong object.</li>
+                </ul>
+            </div>
+
+            <h3 class="font-bold text-lg mb-3 border-t pt-4 text-gray-800">Microphone Check</h3>
+            <p class="mb-6 text-justify">Before we begin, please click "Record Test Audio", say "Hello Robot", and then play it back to confirm your microphone is working.</p>
             
             <div class="bg-gray-50 p-6 rounded-lg border mb-6 text-center">
                 <button id="tutorial-record-btn" onclick="recordTestAudio()" class="bg-red-500 text-white px-6 py-2 rounded shadow hover:bg-red-600 transition mb-4">🔴 Record Test Audio (3s)</button>
@@ -100,7 +115,7 @@
             </div>
 
             <div class="flex gap-4">
-                <button onclick="skipTutorial()" class="flex-1 bg-gray-300 text-gray-800 font-bold py-3 rounded hover:bg-gray-400 transition">Skip Tutorial</button>
+                <button onclick="skipTutorial()" class="flex-1 bg-gray-300 text-gray-800 font-bold py-3 rounded hover:bg-gray-400 transition">Skip to Study</button>
                 <button onclick="finishTutorial()" class="flex-1 bg-green-600 text-white font-bold py-3 rounded hover:bg-green-700 transition">Looks Good, Start Study!</button>
             </div>
         </div>
