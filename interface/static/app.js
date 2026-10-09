@@ -138,7 +138,6 @@ function loadTrial() {
     }
 
     const scenario = scenarios[currentTrialIndex];
-    document.getElementById('scenario-name').innerText = scenario;
     document.getElementById('trial-counter').innerText = currentTrialIndex + 1;
     
     // Reset trial data
