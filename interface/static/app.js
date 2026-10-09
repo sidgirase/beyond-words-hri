@@ -1,11 +1,8 @@
-const scenarios = [
-    'Assume Mode', 
-    'Audio Only (Yes)', 
-    'Audio Only (No)', 
-    'Gesture Only (Yes)', 
-    'Gesture Only (No)', 
-    'Hybrid (Yes)', 
-    'Hybrid (No)'
+let scenarios = [
+    'Immediate (No Clarification)', 
+    'Audio Only', 
+    'Gesture Only', 
+    'Hybrid (Audio + Gesture)'
 ];
 
 let currentTrialIndex = 0;
@@ -24,13 +21,20 @@ function showScreen(screenId) {
 
 function startTrials() {
     const age = document.getElementById('user-age').value;
-    const exp = document.getElementById('user-exp').value;
+    const studyType = document.getElementById('study-type').value;
     
     if(!age) { alert("Please enter your age."); return; }
 
-    sessionData.user = { age, robotExperience: exp };
+    sessionData.user = { age, studyType };
     
-    // Shuffle scenarios for counterbalancing (optional, keeping linear for now)
+    // Admin Study Type Logic
+    if (studyType === 'between') {
+        // Pick one random mode
+        const randomMode = scenarios[Math.floor(Math.random() * scenarios.length)];
+        scenarios = [randomMode];
+    }
+    
+    document.getElementById('trial-total').innerText = scenarios.length;
     currentTrialIndex = 0;
     loadTrial();
 }
@@ -64,11 +68,33 @@ function endTrial(isSuccess) {
     showScreen('evaluation');
 }
 
-function replayAction() {
-    // This would eventually send a WebSockets/ROS signal to the physical robot!
-    console.log("Replaying robot action...");
-    alert("Replay signal sent to robot!");
-    currentTrialData.interactionLogs.push({action: "replay_clicked", time: Date.now()});
+async function replayAction() {
+    // End the current trial with 'retried' status and save it
+    const durationSec = (Date.now() - trialStartTime) / 1000.0;
+    currentTrialData.success = "retried";
+    currentTrialData.duration_seconds = durationSec;
+    currentTrialData.evaluation = "none (retried)";
+    
+    sessionData.trials.push(currentTrialData);
+    
+    // Send to backend
+    try {
+        await fetch('/api/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user: sessionData.user,
+                trial_index: currentTrialIndex,
+                data: currentTrialData
+            })
+        });
+    } catch(e) {
+        console.error("Failed to save to backend:", e);
+    }
+    
+    alert("Replay signal sent to robot! Restarting this trial iteration.");
+    // Restart the current trial without advancing the index
+    loadTrial();
 }
 
 async function submitEval(event) {
