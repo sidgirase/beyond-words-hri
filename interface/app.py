@@ -26,6 +26,11 @@ def index():
 @app.route('/api/submit', methods=['POST'])
 def submit():
     data = request.json
+    
+    # Ignore test runs
+    if data.get('user', {}).get('uuid') == 'test_user':
+        return jsonify({"status": "success", "message": "Test data ignored."})
+        
     data['timestamp'] = datetime.now().isoformat()
     
     db = load_db()

@@ -52,6 +52,13 @@ function setupNewUser() {
     showScreen('onboarding');
 }
 
+function setupTestUser() {
+    const type = document.getElementById('admin-study-type').value;
+    sessionData.user.uuid = "test_user";
+    sessionData.user.studyType = type;
+    showScreen('onboarding');
+}
+
 function resumeUser() {
     const uuid = document.getElementById('admin-resume-uuid').value;
     if(!uuid) { alert("Enter a valid UUID"); return; }
@@ -215,7 +222,6 @@ async function recordTestAudio() {
     }
 }
 
-function skipTutorial() { startTrials(); }
 function finishTutorial() { startTrials(); }
 
 // --- USER LOGIC ---
