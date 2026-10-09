@@ -168,13 +168,58 @@ function toggleSpeechRecognition() {
     }
 }
 
-// --- USER LOGIC ---
-function startTrials() {
+// --- TUTORIAL LOGIC ---
+function startTutorial() {
     const age = document.getElementById('user-age').value;
     if(!age) { alert("Please enter your age."); return; }
-
     sessionData.user.age = age;
-    
+    showScreen('tutorial');
+}
+
+let testMediaRecorder;
+let testAudioChunks = [];
+
+async function recordTestAudio() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        testMediaRecorder = new MediaRecorder(stream);
+        const btn = document.getElementById('tutorial-record-btn');
+        const player = document.getElementById('tutorial-audio-player');
+        
+        testMediaRecorder.ondataavailable = e => { testAudioChunks.push(e.data); };
+        
+        testMediaRecorder.onstop = () => {
+            const audioBlob = new Blob(testAudioChunks, { type: 'audio/webm' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            player.src = audioUrl;
+            player.classList.remove('hidden');
+            btn.innerText = "🔴 Record Test Audio (3s)";
+            btn.classList.remove('bg-green-500');
+            btn.classList.add('bg-red-500');
+            testAudioChunks = [];
+        };
+
+        testMediaRecorder.start();
+        btn.innerText = "Listening...";
+        btn.classList.remove('bg-red-500');
+        btn.classList.add('bg-green-500');
+        
+        // Record for 3 seconds then stop
+        setTimeout(() => {
+            if(testMediaRecorder.state === "recording") testMediaRecorder.stop();
+        }, 3000);
+        
+    } catch (err) {
+        alert("Microphone access denied or unavailable.");
+        console.error(err);
+    }
+}
+
+function skipTutorial() { startTrials(); }
+function finishTutorial() { startTrials(); }
+
+// --- USER LOGIC ---
+function startTrials() {
     // Admin Study Type Logic applied
     if (sessionData.user.studyType === 'between-immediate') {
         scenarios = ['Immediate (No Clarification)'];
