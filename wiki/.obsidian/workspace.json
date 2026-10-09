@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "concepts/mujoco-primer.md",
+                "file": "plans/ik-pick-and-gesture-poc.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mujoco-primer"
+              "title": "ik-pick-and-gesture-poc"
             }
           },
           {
@@ -204,6 +204,7 @@
   },
   "active": "e516646d776df700",
   "lastOpenFiles": [
+    "concepts/mujoco-primer.md",
     "plans/README.md.tmp.7908.14bef4a9ee48",
     "index.md.tmp.7908.0cffd9879397",
     "plans/ik-pick-and-gesture-poc.md",
@@ -211,7 +212,6 @@
     "concepts/clarification-strategies.md",
     "concepts/ambiguous-scene-design.md",
     "concepts/dev-environment.md",
-    "concepts/mujoco-primer.md",
     "concepts/timeline.md",
     "concepts/study-design.md",
     "sources/proposal-beyond-words.md",
