@@ -108,6 +108,66 @@ async function deleteParticipant() {
     }
 }
 
+// --- SPEECH TO TEXT LOGIC ---
+let recognition = null;
+let isRecording = false;
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    recognition.onstart = function() {
+        isRecording = true;
+        const micBtn = document.getElementById('mic-btn');
+        micBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+        micBtn.classList.add('bg-green-500', 'hover:bg-green-600', 'animate-pulse');
+        micBtn.innerText = '🔴 Listening...';
+    };
+
+    recognition.onresult = function(event) {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            transcript += event.results[i][0].transcript;
+        }
+        document.getElementById('command-input').value = transcript;
+    };
+
+    recognition.onerror = function(event) {
+        console.error("Speech Recognition Error: ", event.error);
+        stopRecordingUI();
+    };
+
+    recognition.onend = function() {
+        stopRecordingUI();
+    };
+} else {
+    console.warn("Web Speech API is not supported in this browser.");
+}
+
+function stopRecordingUI() {
+    isRecording = false;
+    const micBtn = document.getElementById('mic-btn');
+    micBtn.classList.remove('bg-green-500', 'hover:bg-green-600', 'animate-pulse');
+    micBtn.classList.add('bg-red-500', 'hover:bg-red-600');
+    micBtn.innerText = '🎤 Speak';
+}
+
+function toggleSpeechRecognition() {
+    if (!recognition) {
+        alert("Speech Recognition is not supported in your current browser. Please use Google Chrome or Microsoft Edge.");
+        return;
+    }
+    
+    if (isRecording) {
+        recognition.stop();
+    } else {
+        document.getElementById('command-input').value = '';
+        recognition.start();
+    }
+}
+
 // --- USER LOGIC ---
 function startTrials() {
     const age = document.getElementById('user-age').value;

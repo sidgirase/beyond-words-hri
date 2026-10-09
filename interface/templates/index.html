@@ -108,7 +108,10 @@
             <div class="mb-6 p-4 bg-gray-50 rounded-lg border">
                 <h3 class="font-semibold mb-2">Send Command to Robot</h3>
                 <div class="flex gap-2">
-                    <input type="text" id="command-input" class="flex-1 border p-2 rounded" placeholder="Type your command here...">
+                    <button id="mic-btn" onclick="toggleSpeechRecognition()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition flex items-center justify-center" title="Click to Speak">
+                        🎤 Speak
+                    </button>
+                    <input type="text" id="command-input" class="flex-1 border p-2 rounded" placeholder="Type your command here or click Speak...">
                     <button class="bg-gray-800 text-white px-6 py-2 rounded hover:bg-gray-900 transition">Send</button>
                 </div>
             </div>
