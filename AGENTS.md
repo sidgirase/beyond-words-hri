@@ -25,12 +25,13 @@ wiki/
   concepts/       topic pages synthesized across sources (study design, scene design, robot, ...)
   codebase/       pages describing the code AS IT EXISTS NOW (architecture, modules, how to run)
   plans/          proposed feature plans; the only part of the wiki allowed to differ from the code
+  logs/           append-only progress logs of plan implementations (timestamped entries, newest last)
 ```
 
 ## Page conventions
 
 - File names: lowercase kebab-case, `.md`.
-- Every page (except `index.md`, `log.md`, `changelog.md`) starts with YAML frontmatter:
+- Every page (except `index.md`, `log.md`, `changelog.md` and the files in `logs/`) starts with YAML frontmatter:
   ```yaml
   ---
   title: Human-readable title
@@ -77,6 +78,12 @@ wiki-vs-code drift in `codebase/`. Record the pass in `log.md`.
 
 The rule from llm-wiki.md: *every prompt either reads the wiki to plan, or changes the code — never
 both*. Syncing `codebase/` pages right after implementing is part of the implement step, not planning.
+
+## Implementation progress logs
+While a plan is being implemented, the agent appends a timestamped entry to
+`wiki/logs/{plan-slug}-progress.md` after every meaningful step (milestone reached, file group written,
+check run, problem found). Entry layout: heading with date, time, milestone and title; status; what changed;
+files; verification; notes. Entries are only appended, never rewritten.
 
 ## Log format
 

@@ -17,4 +17,4 @@ When a plan is implemented, its durable content moves into `codebase/`, the plan
 `changelog.md` + `log.md` get entries.
 
 ## Current plans
-- [[ik-pick-and-gesture-poc]] — status `draft` (2026-10-09). IK-driven pick-up and pointing gesture PoC.
+- [[ik-pick-and-gesture-poc]] — status `implemented` (2026-10-09). Kept as the design record; the code is in [[codebase/README|codebase]]. No open plans.

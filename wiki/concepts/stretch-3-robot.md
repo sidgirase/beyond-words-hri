@@ -2,7 +2,7 @@
 title: Stretch 3 robot and the stretch_mujoco simulator
 type: concept
 sources: [proposal-beyond-words, idea-analysis, github.com/hello-robot/stretch_mujoco @ d107e09 (2026-01-05)]
-updated: 2026-09-30
+updated: 2026-10-09
 ---
 
 # Stretch 3 and `stretch_mujoco`
@@ -41,7 +41,8 @@ Machine setup, measurements and workarounds are in [[dev-environment]].
   x, y, θ), `get_ee_pose()`, `get_link_pose(name)`, `pull_joint_limits()`, `stop()`.
 - **The client cannot read object poses.** Only robot status, cameras and sensors cross the process
   boundary. Checking whether an object is in the bin, or which object is held, needs either our own
-  extension of the server, or to run MuJoCo in-process instead. This is a key design decision for the plan.
+  extension of the server, or to run MuJoCo in-process instead. **Resolved 2026-10-09:** the project runs MuJoCo
+  in-process and loads only the model file ([[codebase/architecture]]).
 
 ## Robot model (from `stretch.xml`)
 Actuator names and control ranges (sim units):
@@ -68,6 +69,29 @@ Actuator names and control ranges (sim units):
 - The mesh-heavy model has 112 meshes and about 927k vertices.
 - In its home pose the robot is at the origin facing +x, and **the arm extends toward −y**. With the arm at
   0.5 and wrist pitch −1.57, the grasp centre is at about (0.03, −0.61).
+
+## Model details verified from the submodule (2026-10-09)
+Source: `src/stretch_mujoco/` (git submodule, commit `c78d6a1`, README-only change after `d107e09`) and
+forward-kinematics checks in a throwaway venv. Full table in [[ik-pick-and-gesture-poc]], section 2.
+- The base is a free joint; the wheel axle midpoint is the `base_link` origin (wheels at y = ±0.17035,
+  radius 0.05), so wheel spin rotates the robot about the origin. Base footprint: x from −0.28 to +0.05,
+  y ±0.17.
+- Wheel actuators are `velocity` type with `gear=3`: the control value is 3 times the wheel joint speed,
+  range ±6. The base turns at most about 0.76 rad/s.
+- The arm is one DOF: four slide joints held equal by equality constraints, driven by one tendon; each
+  joint is `arm / 4`.
+- Top-down grasp (wrist pitch −1.57), base frame: grasp centre x = −0.0215, y = −(0.1207 + arm),
+  z = lift − 0.131. With a straight gripper (pitch 0): y = −(0.4148 + arm), z = lift + 0.1145.
+- Fingers close along world x (perpendicular to the arm). Fingertip gap: 0.002 m at gripper −0.02, 0.069 m
+  at 0, 0.206 m at 0.04.
+- Lift servo lags its target by 4 to 10 mm under load; the arm servo does not.
+- The `home` and `stow` keyframes are ctrl-only (`mujoco_server.py` copies only `ctrl`).
+- `get_ee_pose` and `get_link_pose` use the URDF through `urchin`, not the MJCF.
+
+**Contradiction:** the "Robot model" section above gives the grasp centre as about (0.03, −0.61) with arm 0.5
+and pitch −1.57. Forward kinematics on the MJCF give (−0.0215, −0.6207). The y values agree; the x offset
+differs in size and sign. The earlier value was read from a running simulation, possibly with a nonzero wrist
+yaw. Treat the MJCF value as authoritative for planning; the same note is in [[ik-pick-and-gesture-poc]].
 
 ## Default `scene.xml`
 Floor, a wooden table box centred at (0, −1, 0.24) with half-size 0.6 × 0.5 × 0.24 (**top at z = 0.48**,

@@ -2,7 +2,7 @@
 title: Development environment (verified requirements)
 type: concept
 sources: [stretch-3-robot, local machine checks 2026-09-30]
-updated: 2026-09-30
+updated: 2026-10-09
 ---
 
 # Development environment
@@ -27,6 +27,14 @@ folder (not part of the repo). **The project itself uses conda**; see the setup 
   granularity (measured `sleep(1.8 ms)` → 12 ms), and stretch_mujoco sleeps once per 2 ms physics
   step, which caps real time at about 0.15×. Python 3.11 uses high-resolution timers (measured 2.3 ms).
 - **`mujoco==3.2.6`** (pinned by stretch_mujoco; the model won't load on 3.4.0). See [[stretch-3-robot]].
+- **`mink==0.0.13`** (differential IK, used by `hri_sim/ik.py`). Pulls in `qpsolvers` and `daqp`
+  (wheels exist for Windows and Python 3.11). **Do not upgrade mink**: 1.0.0 to 1.3.0 require MuJoCo 3.3.6 or
+  newer, and an unpinned `pip install mink` pulls MuJoCo 3.10 or newer, which cannot load the Stretch model.
+  Verified 2026-10-09 in a throwaway uv venv: `mujoco 3.2.6`, `mink 0.0.13`, `numpy 2.4.6`, `qpsolvers 4.13.0`,
+  `daqp 0.10.3` resolve together.
+- `imageio` and `imageio-ffmpeg` (optional, for `scripts/demo.py --record`; imageio-ffmpeg ships the ffmpeg
+  binary, so no separate install). Verified 2026-10-09 in the throwaway uv venv: imageio 2.38.1, imageio-ffmpeg 0.6.0;
+  mp4 (H.264) writing and reading work.
 - `hello-robot-stretch-mujoco` 0.5.0 from GitHub (pulls in `hello-robot-stretch-urdf`, `urchin`,
   `pynput`, `opencv-python`, `matplotlib`, `inputs`, `click`).
 - No GPU/CUDA needed for simulation. A future learned policy (VLA) **cannot use a local CUDA GPU**. The
@@ -65,6 +73,7 @@ behave the same. Confirm with the check command above the first time it's create
 | **passive viewer** (GUI), sensors off, no cameras | real-time factor **0.61**, joints reach setpoints, base drives. **Works on Windows.** |
 | managed viewer (`use_passive_viewer=False`) | sim time ran at 1.0× but **commanded joints did not move** within 6 s. Treat as not working until investigated. |
 | startup time | 5–7 s (process spawn + model load) |
+| **in-process `hri_sim`** (2026-10-09), sensors off, no cameras | about 0.05 ms per `mj_step`, about 33× real time unpaced; paced to real time with the passive viewer: 3 s of sim in 3.00 s of wall time. Works on Windows. |
 
 ## Rules that follow
 1. Always disable the sensor stage (`model.opt.disableflags |= mjDSBL_SENSOR`) or strip the lidar from

@@ -46,3 +46,37 @@ Append-only. Entries: `## [YYYY-MM-DD] {op} | {title}`, op is one of init, inges
 - New draft plan [[plans/ik-pick-and-gesture-poc]]: in-process MuJoCo (option B of [[mujoco-primer]]), table with blue and green cylinders, damped-least-squares IK, pick-up and a base-rotate plus half-arm-extend gesture, exposed as blocking skill functions for scripts and a later GUI.
 - Milestones M0 to M6 with pass criteria (per-colour pick, perturbation sweep, gesture accuracy, 7 sequence combinations). 12 assumptions and 9 open questions listed in the plan.
 - Model details that could not be checked (no local stretch_mujoco checkout, conda env not built) are marked unverified. No code changed; waiting for approval.
+
+## [2026-10-09] plan | Refined PoC plan from the stretch_mujoco submodule, prototype and IK survey
+- Read the submodule (`src/stretch_mujoco`, commit c78d6a1, README-only change after the pinned d107e09): wheel gear 3, arm as one DOF via equality constraints, ctrl-only keyframes, URDF-based `get_ee_pose`. Added a verified-details section and a **Contradiction** (grasp-centre x offset) to [[stretch-3-robot]].
+- Throwaway prototype in a scratch uv venv (not project code): MjSpec scene, wheel yaw control, IK, pick, gesture and 9 sequences all worked in MuJoCo 3.2.6; viewer opens in-process on Windows. Findings rewrote [[plans/ik-pick-and-gesture-poc]]: carry pose, velocity-based settling, live object targets, hanging-gripper gesture, 0.52 m layout.
+- Background agent surveyed IK libraries; only mink 0.0.13 fits (MuJoCo 3.2.6, Windows, no GPU). It advised keeping the hand-written solver; on the user's instruction the plan now uses mink 0.0.13 (pin required; newer mink needs a newer MuJoCo). I re-checked the mink pins, daqp license and Stretch example on PyPI and GitHub.
+- No project code changed; status stays draft.
+
+## [2026-10-09] plan | PoC plan updated with the user's answers
+- [[plans/ik-pick-and-gesture-poc]]: gesture now ends with a straight gripper (swing from hanging to pitch 0 at carry height); fraction stays a share of the grasp extension, default 0.3 because a straight gripper is already 0.415 m out (0.5 would put the tip 8.6 cm past the cylinder); a successful pick freezes the sim, the last frame stays, `close_window()` and `hold_final_frame()` end the demo; release removed.
+- Fixed layout, real-time pacing default, table edge moved from 0.32 m to 0.36 m and cylinders to 0.54 m so the base and the start pose clear the table; web GUI planned later, so `status()` and `run_async()` are in the API.
+- No old IK solver and no `check_ik.py`; mink 0.0.13 is trusted. Re-ran the scratch prototype on the new layout: 9 sequences passed, gesture then pick 10/10 per colour with 2 cm offsets, picks OK at 0.44 to 0.64 m, no contacts. No project code changed.
+
+## [2026-10-09] plan | PoC plan: viewer session for the gesture, GUI deferred
+- [[plans/ik-pick-and-gesture-poc]]: user accepted the mink 0.0.13 pin and a frozen, draggable final frame; web GUI work is out of this plan, so `status()`, `run_async()` and the busy guard were removed.
+- Gesture fraction and gripper state are now provisional (0.3, closed) until the user judges them: added `gripper` argument and `scripts/demo_gesture_variants.py` (fractions 0.15, 0.3, 0.5 by closed and open gripper, real time, draggable camera) and made that session part of M4.
+
+## [2026-10-09] plan | PoC plan: new gesture order, no return to carry between skills
+- [[plans/ik-pick-and-gesture-poc]]: gesture is now turn, then wrist swing to straight and gripper close together, then lower the lift, then extend the arm. Between skills the arm retracts completely and the base turns with the gripper still straight and closed; a pick after a gesture lifts to carry height and pitches the wrist down only afterwards. `clear_to_rotate` became `prepare_to_turn`.
+- Re-ran the scratch prototype with this order and a per-step contact monitor: 9 sequences passed with zero robot-table and robot-cylinder contacts, gesture then pick 10/10 per colour with 2 cm offsets, all 6 fraction and gripper variants clean. No project code changed.
+
+## [2026-10-09] implement | IK-driven pick-up and gesture PoC
+- Implemented [[plans/ik-pick-and-gesture-poc]] (approved the same day): package `src/hri_sim/`, scripts in `src/scripts/`, `mink==0.0.13` added to `environment.yml`. Details in [[changelog]] and step by step in [[logs/ik-pick-and-gesture-poc-progress]].
+- Verified in a throwaway uv environment: all five check scripts pass (M1 to M6), including the viewer window behaviours; the conda environment is still for the user to update (OI-8).
+- Wiki sync: new pages [[codebase/architecture]], [[codebase/ik-and-motion]], [[codebase/skills-api]], [[codebase/how-to-run]] and [[ik-library-survey]]; plan marked `implemented` (kept as design record); open issues OI-1, OI-10, OI-11, OI-13 closed, OI-19 (gesture look) and OI-20 (mink pin) added; `AGENTS.md` got the `logs/` folder.
+
+## [2026-10-09] lint | Wiki sync after the PoC implementation
+- Checked every page for stale statements after the first code landed. Fixed: [[mujoco-primer]] (option B now implemented, no longer a pending choice), [[stretch-3-robot]] (object-pose problem marked resolved), [[timeline]] (Check-In 1 has passed; what is still unbuilt), [[open-issues]] (intro, OI-6 and OI-17 wording), [[study-design]] (what `hri_sim` already logs and what is missing).
+- No unresolved wikilinks, no orphan pages, no angle-bracket characters; all pages are listed in [[index]]. Codebase pages were compared with the code and the check results (counts, timings, defaults) and agree.
+- Left as they are on purpose: the conda environment is still unbuilt (OI-8) and the gesture defaults are provisional (OI-19).
+
+## [2026-10-09] implement | Gesture redesign, code cleanup and video recording
+- At the user's request: the gesture now keeps the gripper hanging, turns while closing the gripper, extends over the cylinder and lowers the lift halfway; no retract between skills, a pick at the same object only opens the gripper. Unused code removed; `demo.py --record` saves an mp4 to `src/outputs/`. Details in [[changelog]] and [[logs/ik-pick-and-gesture-poc-progress]].
+- Wiki sync: [[codebase/ik-and-motion]], [[codebase/skills-api]], [[codebase/how-to-run]], [[codebase/architecture]], [[codebase/README|codebase]], [[overview]], [[open-issues]] (OI-19 reworded), [[dev-environment]] (imageio); the plan page got a note that its gesture sections are superseded.
+- Gap: the scratch test environment became unavailable late in the session, so the full check suite was not re-run after the recording feature and the final tidy-up (only syntax checks, `check_recording` and one recorded demo). Recorded in [[codebase/how-to-run]].

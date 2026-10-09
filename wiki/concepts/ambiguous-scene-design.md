@@ -64,6 +64,12 @@ object was teleported under the gripper on the default table (top z = 0.48). Mas
   **distractors only**. This keeps the Dogan-style ambiguity while avoiding "unrelated grasping
   failures" ([[proposal-beyond-words]]).
 
+### Cylinder pick-up in the full pipeline (2026-10-09)
+A blue and a green cylinder (r = 3.5 cm, h = 10 cm, 0.1 kg, `condim=6`, friction 1.0 0.01 0.002) were picked
+and lifted 0.138 m by the IK-driven `pick` skill in every check: both colours, 20 of 20 trials each with
+random ±2 cm offsets, and at every distance from 0.44 m to 0.64 m from the rotation centre
+([[codebase/how-to-run]]). Round, flat-based cylinders did not roll.
+
 ## Rolling objects
 **Round objects roll off the table.** A plain sphere (default `condim=3`, no rolling friction) rolled off
 the table by itself within about 1 s. The user noticed the same thing in the viewer. Fix: give round objects

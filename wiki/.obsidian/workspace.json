@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "plans/ik-pick-and-gesture-poc.md",
+                "file": "logs/ik-pick-and-gesture-poc-progress.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ik-pick-and-gesture-poc"
+              "title": "ik-pick-and-gesture-poc-progress"
             }
           },
           {
@@ -204,10 +204,23 @@
   },
   "active": "e516646d776df700",
   "lastOpenFiles": [
+    "codebase/how-to-run.md.tmp.22152.5f80ebe7fcb8",
+    "codebase/how-to-run.md",
+    "open-issues.md",
+    "codebase/architecture.md",
+    "codebase/ik-and-motion.md",
+    "logs/ik-pick-and-gesture-poc-progress.md",
+    "plans/ik-pick-and-gesture-poc.md",
+    "concepts/ik-library-survey.md",
+    "concepts/ik-library-survey.md.tmp.7908.bdec00784c81",
+    "codebase/skills-api.md",
+    "codebase/architecture.md.tmp.7908.d64da22414d2",
+    "logs",
+    "concepts/stretch-3-robot.md.tmp.7908.fda54ed171ab",
+    "plans/ik-pick-and-gesture-poc.md.tmp.7908.54f8a86a5ffa",
     "concepts/mujoco-primer.md",
     "plans/README.md.tmp.7908.14bef4a9ee48",
     "index.md.tmp.7908.0cffd9879397",
-    "plans/ik-pick-and-gesture-poc.md",
     "plans/ik-pick-and-gesture-poc.md.tmp.7908.d3fbce345880",
     "concepts/clarification-strategies.md",
     "concepts/ambiguous-scene-design.md",
@@ -216,13 +229,11 @@
     "concepts/study-design.md",
     "sources/proposal-beyond-words.md",
     "concepts/stretch-3-robot.md",
-    "open-issues.md",
     "log.md",
     "changelog.md",
     "sources/dogan-2022-follow-up-clarifications.md",
     "concepts/dev-environment.md.tmp.25676.a56b2e863a82",
     "concepts/stretch-3-robot.md.tmp.25676.c5ad3a39facc",
-    "sedxf1Hj3",
     "sources/idea-analysis.md",
     "sources/course-project-overview.md"
   ]

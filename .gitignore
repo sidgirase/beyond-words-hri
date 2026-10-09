@@ -1,1 +1,4 @@
-wiki/.obsidian/
+wiki/.obsidian/*
+__pycache__/
+*.pyc
+outputs/

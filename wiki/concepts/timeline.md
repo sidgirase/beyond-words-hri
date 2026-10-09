@@ -2,7 +2,7 @@
 title: Timeline and grading
 type: concept
 sources: [course-project-overview, proposal-beyond-words]
-updated: 2026-09-30
+updated: 2026-10-09
 ---
 
 # Timeline
@@ -24,6 +24,8 @@ Each of the five milestones is worth 50 pts; the final report 150 pts on the tea
 Literature review 15 · System implementation (interface, scoring, 4 expressions on Stretch/sim) 40 ·
 User study execution 35 · Data analysis 35 · Final report 25.
 
-**Note:** as of 2026-09-30 there is no code, and 8 days remain to Check-In 1. The simulator environment
-plus teleop pick-and-place is the critical path for everything after it. The environment itself is verified
-([[dev-environment]]).
+**Note (2026-10-09):** Check-In Day 1 (2026-10-08) has passed. The simulator environment is verified
+([[dev-environment]]) and a first IK-driven simulation exists: gesture and pick for two cylinders
+([[codebase/README|codebase]]). Not yet built, though promised in the proposal: the GUI, the VLA, the scoring
+metric, the verbal conditions, and the bin task. The mid-point poster (2026-10-20 / 22) expects all four
+clarification modes working, so those are the critical path now.

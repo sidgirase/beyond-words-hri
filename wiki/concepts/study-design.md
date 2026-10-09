@@ -32,3 +32,8 @@ Likert scale, external validity, internal validity.
 ## What the sim must log (for the objective DVs)
 Per trial: participant/condition ids, scene seed, instruction text, each robot turn (question/gesture) and
 human response with timestamps, chosen object, placed-in-bin outcome, total time.
+
+**What `hri_sim` already provides (2026-10-09):** per skill `sim_time`, `wall_time`, IK timings and measurements in
+`SkillResult.info` ([[codebase/skills-api]]); an event log of every motion (`sim.events`); live object positions.
+Not yet provided: the bin outcome, participant and condition ids, instruction text, human responses, and a
+log file format ([[open-issues]] OI-17).

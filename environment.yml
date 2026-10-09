@@ -12,4 +12,7 @@ dependencies:
   - git                # needed by pip to install stretch_mujoco from GitHub
   - pip:
       - mujoco==3.2.6  # stretch_mujoco's robot model fails to load on newer MuJoCo (3.4.0 tested)
+      - mink==0.0.13   # differential IK library; 0.0.13 is the last release that supports MuJoCo 3.2.6 (1.x needs 3.3.6 or newer)
+      - imageio        # video recording in scripts/demo.py --record (optional; imageio-ffmpeg supplies the encoder)
+      - imageio-ffmpeg
       - hello-robot-stretch-mujoco @ git+https://github.com/hello-robot/stretch_mujoco.git@d107e094cc295d92f7461bd233daef96e9e22fab
