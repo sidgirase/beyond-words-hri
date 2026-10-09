@@ -1,0 +1,140 @@
+[
+    {
+        "user": {
+            "age": "25",
+            "robotExperience": "3"
+        },
+        "trial_index": 0,
+        "data": {
+            "scenario": "Assume Mode",
+            "interactionLogs": [],
+            "success": false,
+            "duration_seconds": 15.23,
+            "evaluation": {
+                "gs-comp": "3",
+                "trust-1": "1",
+                "clarity-1": "2"
+            }
+        },
+        "timestamp": "2026-10-09T12:45:00.692320"
+    },
+    {
+        "user": {
+            "age": "25",
+            "robotExperience": "3"
+        },
+        "trial_index": 1,
+        "data": {
+            "scenario": "Audio Only (Yes)",
+            "interactionLogs": [
+                {
+                    "action": "replay_clicked",
+                    "time": 1791564518534
+                }
+            ],
+            "success": false,
+            "duration_seconds": 219.159,
+            "evaluation": {
+                "gs-comp": "3",
+                "trust-1": "3",
+                "clarity-1": "3"
+            }
+        },
+        "timestamp": "2026-10-09T12:48:49.400798"
+    },
+    {
+        "user": {
+            "age": "25",
+            "robotExperience": "3"
+        },
+        "trial_index": 2,
+        "data": {
+            "scenario": "Audio Only (No)",
+            "interactionLogs": [],
+            "success": false,
+            "duration_seconds": 2.731,
+            "evaluation": {
+                "gs-comp": "4",
+                "trust-1": "2",
+                "clarity-1": "2"
+            }
+        },
+        "timestamp": "2026-10-09T12:48:57.059501"
+    },
+    {
+        "user": {
+            "age": "25",
+            "robotExperience": "3"
+        },
+        "trial_index": 3,
+        "data": {
+            "scenario": "Gesture Only (Yes)",
+            "interactionLogs": [],
+            "success": false,
+            "duration_seconds": 11.205,
+            "evaluation": {
+                "gs-comp": "4",
+                "trust-1": "3",
+                "clarity-1": "3"
+            }
+        },
+        "timestamp": "2026-10-09T12:49:13.244191"
+    },
+    {
+        "user": {
+            "age": "25",
+            "robotExperience": "3"
+        },
+        "trial_index": 4,
+        "data": {
+            "scenario": "Gesture Only (No)",
+            "interactionLogs": [],
+            "success": false,
+            "duration_seconds": 7.135,
+            "evaluation": {
+                "gs-comp": "4",
+                "trust-1": "3",
+                "clarity-1": "3"
+            }
+        },
+        "timestamp": "2026-10-09T12:49:25.027692"
+    },
+    {
+        "user": {
+            "age": "25",
+            "robotExperience": "3"
+        },
+        "trial_index": 5,
+        "data": {
+            "scenario": "Hybrid (Yes)",
+            "interactionLogs": [],
+            "success": false,
+            "duration_seconds": 3.849,
+            "evaluation": {
+                "gs-comp": "4",
+                "trust-1": "3",
+                "clarity-1": "3"
+            }
+        },
+        "timestamp": "2026-10-09T12:49:34.654016"
+    },
+    {
+        "user": {
+            "age": "25",
+            "robotExperience": "3"
+        },
+        "trial_index": 6,
+        "data": {
+            "scenario": "Hybrid (No)",
+            "interactionLogs": [],
+            "success": false,
+            "duration_seconds": 6.842,
+            "evaluation": {
+                "gs-comp": "4",
+                "trust-1": "2",
+                "clarity-1": "3"
+            }
+        },
+        "timestamp": "2026-10-09T12:49:46.339206"
+    }
+]

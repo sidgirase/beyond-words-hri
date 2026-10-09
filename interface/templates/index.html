@@ -9,8 +9,64 @@
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800 font-sans">
     
-    <div id="app" class="max-w-4xl mx-auto py-10 px-4">
+    <div id="app" class="max-w-4xl mx-auto py-10 px-4 relative">
         
+        <!-- Admin Floating Button (Hidden on Admin screens, shown on User screens) -->
+        <button id="admin-float-btn" onclick="openAdminModal()" class="hidden fixed bottom-4 right-4 bg-gray-800 text-white p-3 rounded-full shadow-lg opacity-50 hover:opacity-100 transition z-50">
+            ⚙️ Admin
+        </button>
+
+        <!-- Admin Auth Screen -->
+        <div id="screen-admin-login" class="screen bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto mt-20">
+            <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Researcher Login</h1>
+            <input type="password" id="admin-pass" class="w-full border p-3 rounded mb-4 text-center" placeholder="Enter Password">
+            <button onclick="loginAdmin()" class="w-full bg-gray-800 text-white font-bold py-3 rounded hover:bg-gray-900 transition">Unlock</button>
+        </div>
+
+        <!-- Admin Setup Dashboard -->
+        <div id="screen-admin-dashboard" class="screen hidden bg-white rounded-xl shadow-lg p-8">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-4">Study Setup Dashboard</h1>
+            
+            <div class="grid grid-cols-2 gap-8">
+                <!-- New Participant -->
+                <div class="bg-gray-50 p-6 rounded-lg border">
+                    <h2 class="text-xl font-bold mb-4">Start New Participant</h2>
+                    <label class="block text-sm font-medium mb-2">Study Condition</label>
+                    <select id="admin-study-type" class="w-full border p-2 rounded mb-6">
+                        <option value="within">Within-Subjects (All Modes)</option>
+                        <option value="between-immediate">Between-Subjects: Immediate</option>
+                        <option value="between-audio">Between-Subjects: Audio Only</option>
+                        <option value="between-gesture">Between-Subjects: Gesture Only</option>
+                        <option value="between-hybrid">Between-Subjects: Hybrid</option>
+                    </select>
+                    <button onclick="setupNewUser()" class="w-full bg-blue-600 text-white py-3 rounded font-bold hover:bg-blue-700">Generate UUID & Hand to User</button>
+                </div>
+
+                <!-- Resume Participant -->
+                <div class="bg-gray-50 p-6 rounded-lg border">
+                    <h2 class="text-xl font-bold mb-4">Resume Past Participant</h2>
+                    <label class="block text-sm font-medium mb-2">Enter Existing UUID</label>
+                    <input type="text" id="admin-resume-uuid" class="w-full border p-2 rounded mb-6 font-mono" placeholder="e.g. user_8f2a">
+                    <button onclick="resumeUser()" class="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700">Resume & Hand to User</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin In-Study Modal -->
+        <div id="admin-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg p-6 max-w-sm w-full">
+                <h2 class="text-xl font-bold mb-4">Admin Controls</h2>
+                <input type="password" id="modal-admin-pass" class="w-full border p-2 rounded mb-4" placeholder="Enter Admin Password">
+                <div id="admin-modal-actions" class="hidden space-y-3">
+                    <button onclick="pauseStudy()" class="w-full bg-yellow-500 text-white py-2 rounded">Pause / Block Screen</button>
+                    <button onclick="restartStudy()" class="w-full bg-blue-500 text-white py-2 rounded">Restart Participant</button>
+                    <button onclick="deleteParticipant()" class="w-full bg-red-600 text-white py-2 rounded font-bold">Delete Participant Data & Exit</button>
+                </div>
+                <button onclick="unlockAdminModal()" id="modal-unlock-btn" class="w-full bg-gray-800 text-white py-2 rounded">Unlock Controls</button>
+                <button onclick="closeAdminModal()" class="w-full mt-3 text-gray-500 hover:text-gray-800 underline">Cancel</button>
+            </div>
+        </div>
+
         <!-- Onboarding Screen -->
         <div id="screen-onboarding" class="screen bg-white rounded-xl shadow-lg p-8">
             <h1 class="text-3xl font-bold mb-4 text-blue-600 text-center">Welcome to the Robot Interaction Study</h1>
@@ -22,17 +78,10 @@
             </div>
 
             <h3 class="text-xl font-semibold mb-3">Participant Info</h3>
-            <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="grid grid-cols-1 gap-4 mb-6">
                 <div>
                     <label class="block text-sm font-medium mb-1">Age</label>
                     <input type="number" id="user-age" class="w-full border p-2 rounded" placeholder="e.g. 25">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Study Type (Admin Only)</label>
-                    <select id="study-type" class="w-full border p-2 rounded">
-                        <option value="within">Within-Subjects (All Modes)</option>
-                        <option value="between">Between-Subjects (One Random Mode)</option>
-                    </select>
                 </div>
             </div>
 

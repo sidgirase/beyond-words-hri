@@ -1,3 +1,5 @@
+const ADMIN_PASS = "hri2026"; // Hardcoded for local study
+
 let scenarios = [
     'Immediate (No Clarification)', 
     'Audio Only', 
@@ -7,7 +9,10 @@ let scenarios = [
 
 let currentTrialIndex = 0;
 let sessionData = {
-    user: {},
+    user: {
+        uuid: null,
+        studyType: null
+    },
     trials: []
 };
 
@@ -17,21 +22,108 @@ let currentTrialData = {};
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
     document.getElementById(`screen-${screenId}`).classList.remove('hidden');
+    
+    // Show floating admin button only if user is in-study
+    if(screenId !== 'admin-login' && screenId !== 'admin-dashboard') {
+        document.getElementById('admin-float-btn').classList.remove('hidden');
+    } else {
+        document.getElementById('admin-float-btn').classList.add('hidden');
+    }
 }
 
+// --- ADMIN LOGIC ---
+function loginAdmin() {
+    if(document.getElementById('admin-pass').value === ADMIN_PASS) {
+        showScreen('admin-dashboard');
+    } else {
+        alert("Incorrect Password");
+    }
+}
+
+function generateUUID() {
+    return 'user_' + Math.random().toString(36).substr(2, 6);
+}
+
+function setupNewUser() {
+    const type = document.getElementById('admin-study-type').value;
+    sessionData.user.uuid = generateUUID();
+    sessionData.user.studyType = type;
+    alert(`New Participant Ready!\n\nWrite down this UUID for long-term tracking: ${sessionData.user.uuid}\n\nPlease hand the device to the user.`);
+    showScreen('onboarding');
+}
+
+function resumeUser() {
+    const uuid = document.getElementById('admin-resume-uuid').value;
+    if(!uuid) { alert("Enter a valid UUID"); return; }
+    sessionData.user.uuid = uuid;
+    sessionData.user.studyType = "within"; // Default for resumed
+    alert(`Resuming Participant: ${uuid}\n\nPlease hand the device to the user.`);
+    showScreen('onboarding');
+}
+
+function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
+function closeAdminModal() { 
+    document.getElementById('admin-modal').classList.add('hidden');
+    document.getElementById('admin-modal-actions').classList.add('hidden');
+    document.getElementById('modal-unlock-btn').classList.remove('hidden');
+    document.getElementById('modal-admin-pass').value = '';
+}
+
+function unlockAdminModal() {
+    if(document.getElementById('modal-admin-pass').value === ADMIN_PASS) {
+        document.getElementById('admin-modal-actions').classList.remove('hidden');
+        document.getElementById('modal-unlock-btn').classList.add('hidden');
+    } else {
+        alert("Incorrect Password");
+    }
+}
+
+function pauseStudy() {
+    alert("Study Paused. The screen is locked until the admin clicks OK.");
+}
+
+function restartStudy() {
+    if(confirm("Are you sure you want to restart this participant's session? All unsaved current progress will be lost.")) {
+        closeAdminModal();
+        currentTrialIndex = 0;
+        showScreen('onboarding');
+    }
+}
+
+async function deleteParticipant() {
+    if(confirm("WARNING: This will permanently delete ALL data for this UUID from the database. Proceed?")) {
+        try {
+            await fetch('/api/delete_user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ uuid: sessionData.user.uuid })
+            });
+            alert("Participant Data Deleted.");
+            closeAdminModal();
+            window.location.reload(); // Reset whole app back to Admin Login
+        } catch(e) {
+            console.error(e);
+            alert("Failed to delete.");
+        }
+    }
+}
+
+// --- USER LOGIC ---
 function startTrials() {
     const age = document.getElementById('user-age').value;
-    const studyType = document.getElementById('study-type').value;
-    
     if(!age) { alert("Please enter your age."); return; }
 
-    sessionData.user = { age, studyType };
+    sessionData.user.age = age;
     
-    // Admin Study Type Logic
-    if (studyType === 'between') {
-        // Pick one random mode
-        const randomMode = scenarios[Math.floor(Math.random() * scenarios.length)];
-        scenarios = [randomMode];
+    // Admin Study Type Logic applied
+    if (sessionData.user.studyType === 'between-immediate') {
+        scenarios = ['Immediate (No Clarification)'];
+    } else if (sessionData.user.studyType === 'between-audio') {
+        scenarios = ['Audio Only'];
+    } else if (sessionData.user.studyType === 'between-gesture') {
+        scenarios = ['Gesture Only'];
+    } else if (sessionData.user.studyType === 'between-hybrid') {
+        scenarios = ['Hybrid (Audio + Gesture)'];
     }
     
     document.getElementById('trial-total').innerText = scenarios.length;
