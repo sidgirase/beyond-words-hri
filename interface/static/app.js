@@ -138,7 +138,14 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         for (let i = event.resultIndex; i < event.results.length; ++i) {
             transcript += event.results[i][0].transcript;
         }
-        document.getElementById('command-input').value = transcript;
+        
+        if (!document.getElementById('screen-tutorial').classList.contains('hidden')) {
+            document.getElementById('tutorial-transcript').innerText = transcript;
+            document.getElementById('tutorial-transcript').classList.remove('text-gray-500', 'italic');
+            document.getElementById('tutorial-transcript').classList.add('text-black');
+        } else {
+            document.getElementById('command-input').value = transcript;
+        }
     };
 
     recognition.onerror = function(event) {
@@ -211,9 +218,19 @@ async function recordTestAudio() {
         btn.classList.remove('bg-red-500');
         btn.classList.add('bg-green-500');
         
+        if (recognition) {
+            document.getElementById('tutorial-transcript').innerText = "Listening...";
+            document.getElementById('tutorial-transcript').classList.add('italic', 'text-gray-500');
+            document.getElementById('tutorial-transcript').classList.remove('text-black');
+            recognition.start();
+        }
+        
         // Record for 3 seconds then stop
         setTimeout(() => {
             if(testMediaRecorder.state === "recording") testMediaRecorder.stop();
+            if(recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
         }, 3000);
         
     } catch (err) {

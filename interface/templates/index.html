@@ -107,12 +107,15 @@
             </div>
 
             <h3 class="font-bold text-lg mb-3 border-t pt-4 text-gray-800">Microphone Check</h3>
-            <p class="mb-6 text-justify">Before we begin, please click "Record Test Audio", say "Hello Robot", and then play it back to confirm your microphone is working.</p>
+            <p class="mb-6 text-justify">Before we begin, please click "Record Test Audio", say "Hello Robot", and then play it back to confirm your microphone is working. <strong class="text-blue-600">Also verify that your speech is being transcribed into text accurately below.</strong></p>
             
             <div class="bg-gray-50 p-6 rounded-lg border mb-6 text-center">
                 <button id="tutorial-record-btn" onclick="recordTestAudio()" class="bg-red-500 text-white px-6 py-2 rounded shadow hover:bg-red-600 transition mb-4">🔴 Record Test Audio (3s)</button>
                 <br>
-                <audio id="tutorial-audio-player" class="mx-auto hidden" controls></audio>
+                <audio id="tutorial-audio-player" class="mx-auto hidden mb-4" controls></audio>
+                <div class="mt-4 p-3 bg-white border rounded text-left text-gray-700 min-h-[3.5rem]">
+                    <strong>Live Transcription:</strong> <span id="tutorial-transcript" class="italic text-gray-500">Awaiting speech...</span>
+                </div>
             </div>
 
             <div class="flex gap-4">
